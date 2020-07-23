@@ -50,3 +50,13 @@ class TestPoint(object):
     def test_invalid_point(self, col, row):
         with pytest.raises(ValueError):
             Point(col, row)
+
+    @pytest.mark.parametrize('col, row, expected_str',
+                             [(0, 0, 'A1'),
+                              (1, 1, 'B2'),
+                              (5, 5, 'F6'),
+                              (8, 9, 'J10'),  # Columns skip I
+                              (18, 18, 'T19'),
+                              (4, 15, 'E16')])
+    def test_str(self, col, row, expected_str):
+        assert str(Point(col, row)) == expected_str
