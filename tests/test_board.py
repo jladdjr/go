@@ -22,8 +22,18 @@ class TestBoard(object):
                                                  (8, 8, PointState.BLACK)])
     def test_set_and_get_value_of_space(self, col, row, color):
         board = Board(9)
-        board[col][row] = color
+        board[col][row] = color  # .. using double-brackets
         assert board[col][row] == color
+
+    @pytest.mark.parametrize('col, row, color', [(0, 0, PointState.BLACK),
+                                                 (1, 0, PointState.WHITE),
+                                                 (0, 1, PointState.BLACK),
+                                                 (2, 8, PointState.WHITE),
+                                                 (8, 8, PointState.BLACK)])
+    def test_set_and_get_value_of_space_using_tuple(self, col, row, color):
+        board = Board(9)
+        board[col, row] = color  # .. using tuple
+        assert board[col, row] == color
 
     @pytest.mark.parametrize('color', [PointState.BLACK,
                                        PointState.WHITE])

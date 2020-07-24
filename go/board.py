@@ -24,15 +24,26 @@ class Board(object):
 
     def __getitem__(self, key):
         """Supports indexing a board.
-
-        More specifically:
-        - Returns a `Column` object
-        - .. which, in turn, also supports indexing
-             so that it is possible to retrieve a given point using:
-
         >>> b = Board(19)
         >>> b[5][5]  # retrieve (5, 5), note that indexing begins with 0
+
+        >>> b[5, 5]  # method also supports passing in a tupple of coordinates
         """
+        # if we received a tuple
+        if isinstance(key, tuple):
+            if len(key) != 2:
+                raise ValueError('Board.__getitem__ expected a tuple of two '
+                                 f' elements. received: {key}')
+            col, row = key
+            return self.board[col][row]
+
+        # if this is a part of double brackets (i.e. board[col][row])
+        if not isinstance(key, int):
+            raise ValueError('Board.__getitem__ expects either a tuple of '
+                             'two elements (col, row), or an integer '
+                             'representing the index of a column '
+                             '(in the case of using two brackets: '
+                             f'board[col][row]). received: {key}')
         if key < 0 or key >= self.size:
             raise ValueError('column index must be between 0 and '
                              f'{self.size - 1}. received {key}.')
@@ -41,13 +52,24 @@ class Board(object):
     def __setitem__(self, key, value):
         """Assigning a column a value is not supported.
 
-        This method does not play a role in assigning a board position
-        a value. That happens by:
-
-        1. Accessing a column (using Board.__getitem__)
-        2. Assigning a value to a row (using Column.__setitem__)
+        Only supports assigning a point a value by way of `key`
+        taking the form of a tuple.
         """
-        raise NotImplementedError('Board columns cannot be assigned a value')
+        if not isinstance(key, tuple):
+            raise ValueError('Board.__setitem__ expected a tuple of two '
+                             f' elements. received: {key}')
+        if len(key) != 2:
+            raise ValueError('Board.__setitem__ expected a tuple of two '
+                             f' elements. received: {key}')
+        col, row = key
+        current_state = self.board[col][row]
+        if current_state != PointState.EMPTY:
+            raise BoardStateException("Cannot set point "
+                                      f"{Point(col, row)} to "
+                                      f"{getattr(value, 'name')}; "
+                                      'point already has value '
+                                      f"{getattr(current_state, 'name')}")
+        self.board[col][row] = value
 
     def get_point(self, col, row):
         return self.board[col][row]
@@ -76,7 +98,9 @@ class Column(object):
         if current_state != PointState.EMPTY:
             raise BoardStateException("Cannot set point "
                                       f"{Point(self.column_index, key)} to "
-                                      f"{getattr(value, 'name')}.")
+                                      f"{getattr(value, 'name')}; "
+                                      'point already has value '
+                                      f"{getattr(current_state, 'name')}")
         self.column[key] = value
 
 
