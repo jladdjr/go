@@ -71,9 +71,6 @@ class Board(object):
                                       f"{getattr(current_state, 'name')}")
         self.board[col][row] = value
 
-    def get_point(self, col, row):
-        return self.board[col][row]
-
 
 class Column(object):
     """A single column of a board. Intermediate object that assists in
