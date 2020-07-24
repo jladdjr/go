@@ -15,19 +15,23 @@ class TestBoard(object):
             for y in range(board_size):
                 assert board.board[x][y] == PointState.EMPTY
 
-    @pytest.mark.parametrize('col, row, color', [(3, 5, PointState.BLACK),
-                                                 (2, 8, PointState.WHITE)])
-    def test_setting_empty_space(self, col, row, color):
+    @pytest.mark.parametrize('col, row, color', [(0, 0, PointState.BLACK),
+                                                 (1, 0, PointState.WHITE),
+                                                 (0, 1, PointState.BLACK),
+                                                 (2, 8, PointState.WHITE),
+                                                 (8, 8, PointState.BLACK)])
+    def test_set_and_get_value_of_space(self, col, row, color):
         board = Board(9)
-        board.set_point(col, row, color)
+        board[col][row] = color
+        assert board[col][row] == color
 
     @pytest.mark.parametrize('color', [PointState.BLACK,
                                        PointState.WHITE])
     def test_setting_non_empty_space(self, color):
         board = Board(9)
-        board.set_point(5, 5, color)
+        board[5][5] = color
         with pytest.raises(BoardStateException):
-            board.set_point(5, 5, color)
+            board[5][5] = color
 
 
 class TestPoint(object):
