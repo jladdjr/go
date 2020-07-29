@@ -58,6 +58,6 @@ class BoardAnalysis(object):
                 # .. otherwise, all but one spot in the potential eye must be
                 # occupied by stones of `stone_color`
                 elif not uses_edge and \
-                        len([filter(is_players_stone, states)]) >= 7:
+                        len(list(filter(is_players_stone, states))) >= 7:
                     eyes.append(points_in_eye)
         return eyes
