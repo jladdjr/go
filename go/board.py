@@ -8,6 +8,12 @@ class PointState(Enum):
     BLACK = 1
     WHITE = 2
 
+    def __str__(self):
+        value_to_str = {0: ' ',
+                        1: '*',
+                        2: 'o'}
+        return value_to_str[self.value]
+
 
 class BoardStateException(Exception):
     pass
@@ -70,6 +76,28 @@ class Board(object):
                                       'point already has value '
                                       f"{getattr(current_state, 'name')}")
         self.board[col][row] = value
+
+    def __str__(self):
+        s = ''
+
+        horizontal_border = ''
+        for i in range(self.size + 2):
+            if i == 0 or i == self.size + 1:
+                horizontal_border += '*'
+            else:
+                horizontal_border += '-'
+
+        s += horizontal_border + '\r'
+        for row in range(self.size):
+            s += '\n'
+            for col in range(self.size):
+                if col == 0:
+                    s += '|'
+                s += str(self[row, col])
+                if col == self.size - 1:
+                    s += '|'
+        s += '\n' + horizontal_border
+        return s
 
 
 class Column(object):
