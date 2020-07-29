@@ -1,3 +1,5 @@
+from random import choice
+
 import pytest
 
 from go.board import (Board, PointState)
@@ -59,11 +61,39 @@ class TestSimpleEyeDetection(object):
                                   'three_stones_in_a_row',
                                   'filled_in_square'])
     def test_false_eyes(self, points_in_false_eye):
-
         b = Board(5)
         points_in_false_eye = set(points_in_false_eye)
         for point in points_in_false_eye:
             b[point] = B
+
+        eyes = BoardAnalysis.find_eyes(b, B)
+        assert len(eyes) == 0
+
+    @pytest.mark.parametrize('points_in_eye', [[(0, 1), (1, 1), (1, 0)],
+                                               [(3, 4), (3, 3), (4, 3)],
+                                               [(0, 3), (1, 3), (1, 4)],
+                                               [(0, 3), (1, 3), (1, 4)],
+                                               [(1, 1), (2, 1), (3, 1),
+                                                (3, 2), (2, 3),
+                                                (1, 3), (1, 2)]],
+                             ids=['bottom_left_corner_eye',
+                                  'top_right_corner_eye',
+                                  'top_left_corner_eye',
+                                  'bottom_right_corner_eye',
+                                  'eye_missing_corner'])
+    def test_false_eye_with_other_players_stones(self, points_in_eye):
+        """Take what would be an eye and replace one stone at random
+        with the other players stone."""
+        b = Board(5)
+
+        # replace random point in would-be eye
+        other_players_point = choice(points_in_eye)
+        points_in_eye.remove(other_players_point)
+
+        points_in_eye = set(points_in_eye)
+        for point in points_in_eye:
+            b[point] = B
+        b[other_players_point] = W
 
         eyes = BoardAnalysis.find_eyes(b, B)
         assert len(eyes) == 0
